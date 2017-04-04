@@ -2,6 +2,7 @@
 - name: Install base packages
   pacman: name={{ item }} state=present
   with_items:
+    - base-devel
     - curl
     - docker
     - docker-compose
@@ -9,25 +10,46 @@
     - emacs
     - git
     - tmux
+    - zsh
 
-- name: Install xorg packages
+- name: Install xorg
   pacman: name={{ item }} state=present
   with_items:
     - xorg-server
     - xorg-drivers
-    - chromium
-    - dmenu
-    - firefox
+    - sddm
+
+- name: Install window managers
+  pacman: name={{ item }} state=present
+  with_items:
     - gnome
-    - gvim
     - i3-wm
     - i3status
-    - rxvt-unicode
-    - sddm
-    - xclip
     - xmobar
     - xmonad
     - xmonad-contrib
 
+- name: Install GUI apps
+  pacman: name={{ item }} state=present
+  with_items:
+    - adobe-source-code-pro-fonts
+    - chromium
+    - dmenu
+    - firefox
+    - gvim
+    - rxvt-unicode
+    - xclip
+
 - name: Configure Xorg
   template: src=00-keyboard.conf dest=/etc/X11/xorg.conf.d/00-keyboard.conf
+
+- name: Start SDDM
+  service: name=sddm state=started enabled=yes
+
+- name: Copy pacaur installation script
+  template: src=install-pacaur.sh dest=/tmp/install-pacaur.sh mode=755
+
+- name: Install pacaur from source
+  become: false
+  command: bash /tmp/install-pacaur.sh creates=/usr/bin/pacaur
+
