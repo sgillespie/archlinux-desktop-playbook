@@ -1,0 +1,33 @@
+---
+- name: Install base packages
+  pacman: name={{ item }} state=present
+  with_items:
+    - curl
+    - docker
+    - docker-compose
+    - elinks
+    - emacs
+    - git
+    - tmux
+
+- name: Install xorg packages
+  pacman: name={{ item }} state=present
+  with_items:
+    - xorg-server
+    - xorg-drivers
+    - chromium
+    - dmenu
+    - firefox
+    - gnome
+    - gvim
+    - i3-wm
+    - i3status
+    - rxvt-unicode
+    - sddm
+    - xclip
+    - xmobar
+    - xmonad
+    - xmonad-contrib
+
+- name: Configure Xorg
+  template: src=00-keyboard.conf dest=/etc/X11/xorg.conf.d/00-keyboard.conf

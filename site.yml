@@ -1,0 +1,9 @@
+---
+- name: Sets up ArchLinux
+  hosts: localhost
+  remote_user: user
+  become: yes
+  become_method: sudo
+
+  roles:
+    - desktop
