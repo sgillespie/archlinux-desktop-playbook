@@ -9,7 +9,10 @@
     - elinks
     - emacs
     - git
+    - openssh
     - tmux
+    - unzip
+    - zip
     - zsh
 
 - name: Install xorg
@@ -24,6 +27,7 @@
   with_items:
     - gnome
     - i3-wm
+    - i3lock
     - i3status
     - xmobar
     - xmonad
@@ -35,21 +39,35 @@
     - adobe-source-code-pro-fonts
     - chromium
     - dmenu
+    - feh
     - firefox
     - gvim
     - rxvt-unicode
     - xclip
 
+- name: Start Docker
+  service: name=docker state=started enabled=yes
+
 - name: Configure Xorg
   template: src=00-keyboard.conf dest=/etc/X11/xorg.conf.d/00-keyboard.conf
 
+- name: Configure SDDM
+  template: src=sddm.conf dest=/etc/sddm.conf
+
 - name: Start SDDM
   service: name=sddm state=started enabled=yes
-
+  
 - name: Copy pacaur installation script
   template: src=install-pacaur.sh dest=/tmp/install-pacaur.sh mode=755
 
 - name: Install pacaur from source
   become: false
   command: bash /tmp/install-pacaur.sh creates=/usr/bin/pacaur
+
+- name: Install packages from AUR
+  become: false
+  command: |
+    pacaur --sync --needed --noconfirm --noedit
+      archlinux-themes-sddm
+      slack-desktop
 
